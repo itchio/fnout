@@ -1,7 +1,7 @@
 {
   "name": "fnout",
   "version": "1.0.0",
-  "description": "Identify the contents of files, in particular, executables",
+  "description": "Identify the contents of files, executables in particular",
   "main": "index.js",
   "scripts": {
     "test": "npm run tape && npm run lint",
