@@ -64,49 +64,47 @@ function sniff (buf) {
 async function defaultReadHeader (file) {
   return new Promise((resolve, reject) => {
     readChunk(file, 0, 262, (err, buffer) => {
-      if (err) { return reject(err) }
+      if (err) {
+        if (err.code === 'ENOENT') {
+          // probably a broken symlink, ignore
+          return resolve(new Buffer([]))
+        }
+        return reject(err)
+      }
       resolve(buffer)
     })
   })
 }
 
 sniff.path = async function (file, readHeader = defaultReadHeader) {
-  try {
-    let ext
-    let extMatches = EXT_RE.exec(file)
-    if (extMatches) {
-      ext = extMatches[1].toLowerCase()
+  let ext
+  let extMatches = EXT_RE.exec(file)
+  if (extMatches) {
+    ext = extMatches[1].toLowerCase()
 
-      if (ext === 'dmg') {
-        // compressed .dmg have wrong magic numbers, go by extension
-        return {ext: 'dmg', mime: 'application/x-apple-diskimage'}
-      }
-
-      if (ext === 'jar') {
-        // jar files are hard to distinguish from .zip files without listing their contents
-        return {ext: 'jar', mime: 'application/java-archive', linuxExecutable: true, macExecutable: true}
-      }
+    if (ext === 'dmg') {
+      // compressed .dmg have wrong magic numbers, go by extension
+      return {ext: 'dmg', mime: 'application/x-apple-diskimage'}
     }
 
-    let buf = await readHeader(file)
-    let sniffed = sniff(buf)
-
-    if (sniffed) {
-      return sniffed
+    if (ext === 'jar') {
+      // jar files are hard to distinguish from .zip files without listing their contents
+      return {ext: 'jar', mime: 'application/java-archive', linuxExecutable: true, macExecutable: true}
     }
-
-    if (ext) {
-      return {ext, mime: null}
-    }
-
-    return null
-  } catch (e) {
-    if (e.code === 'ENOENT') {
-      // probably a broken symlink
-      return null
-    }
-    throw e
   }
+
+  let buf = await readHeader(file)
+  let sniffed = sniff(buf)
+
+  if (sniffed) {
+    return sniffed
+  }
+
+  if (ext) {
+    return {ext, mime: null}
+  }
+
+  return null
 }
 
 export default sniff
