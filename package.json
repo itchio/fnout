@@ -1,8 +1,8 @@
 {
   "name": "fnout",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Identify the contents of files, executables in particular",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "npm run tape && npm run lint",
     "tape": "node test/index.js | tap-difflet",
