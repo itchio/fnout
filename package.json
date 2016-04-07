@@ -31,6 +31,7 @@
   "homepage": "https://github.com/itchio/fnout#readme",
   "devDependencies": {
     "assert": "^1.3.0",
+    "babel-cli": "^6.6.5",
     "babel-eslint": "^6.0.2",
     "babel-plugin-syntax-async-functions": "^6.5.0",
     "babel-plugin-transform-async-to-module-method": "^6.7.0",
